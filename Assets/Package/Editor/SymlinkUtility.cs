@@ -13,6 +13,7 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
 	 *	draws a small indicator in the Project view for folders that are
 	 *	symlinks.
 	 */
+    /*
     [InitializeOnLoad]
     public static class SymlinkUtility
     {
@@ -36,17 +37,13 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
             }
         }
 
-        /**
-		 *	Static constructor subscribes to projectWindowItemOnGUI delegate.
-		 */
+        // Static constructor subscribes to projectWindowItemOnGUI delegate.
         static SymlinkUtility()
         {
             EditorApplication.projectWindowItemOnGUI += OnProjectWindowItemGUI;
         }
 
-        /**
-		 *	Draw a little indicator if folder is a symlink
-		 */
+        // Draw a little indicator if folder is a symlink
         private static void OnProjectWindowItemGUI(string guid, Rect r)
         {
             try
@@ -213,4 +210,5 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
             }
         }
     }
+    */
 }

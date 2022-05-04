@@ -10,14 +10,14 @@ One method of quickly debugging multiplayer code is to run multiple unity editor
 
 At package.json, add these lines of code:
 ```json
-"com.gameworkstore.unitymultiplayerenv": "https://github.com/GameWorkstore/unity-multiplayer-env#1.0.0"
+"com.gameworkstore.unitymultiplayerenv": "https://github.com/GameWorkstore/unity-multiplayer-env.git#1.0.0"
 ```
 
 And wait for unity to download and compile the package.
 
 you can upgrade your version by including the release version at end of the link:
 ```json
-"com.gameworkstore.unitymultiplayerenv": "https://github.com/GameWorkstore/unity-multiplayer-env#1.0.0"
+"com.gameworkstore.unitymultiplayerenv": "https://github.com/GameWorkstore/unity-multiplayer-env.git#1.0.0"
 ```
 
 # Where?

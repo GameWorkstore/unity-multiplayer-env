@@ -80,8 +80,6 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
                             "Cancel");
                         if (delete)
                         {
-                            // TODO: implement proper project deletion
-                            throw new System.NotImplementedException();
                             UnityMultiplayerEnvironmentTool.DeleteClone();
                         }
                     }

@@ -116,33 +116,23 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
             /// Clone won't be able to delete itself.
             if (IsClone()) return;
 
-            string cloneProjectPath = GetCloneProjectPath();
+            var cloneProject = GetCloneProject();
 
             ///Extra precautions.
-            if (cloneProjectPath == string.Empty) return;
-            if (cloneProjectPath == GetOriginalProjectPath()) return;
-            if (cloneProjectPath.EndsWith(CloneNameSuffix)) return;
+            if (cloneProject.ProjectPath == string.Empty) return;
+            if (cloneProject.ProjectPath == GetOriginalProjectPath()) return;
+            if (!cloneProject.ProjectPath.EndsWith(CloneNameSuffix)) return;
 
-            /// Delete the clone project folder.
-            throw new System.NotImplementedException();
-            // TODO: implement proper project deletion;
-            //       appears that using FileUtil.DeleteFileOrDirectory(...) on symlinks affects the contents of linked folders
-            //       (because this script self-deleted itself and half of the Assets folder when I tested it :D)
-            //       there must be another, safe method to delete the clone folder and symlinks without touching the original
-            {
-                /*
-                EditorUtility.DisplayProgressBar("Deleting clone...", "Deleting '" + ProjectCloner.GetCloneProjectPath() + "'", 0f);
-                try
-                {
-                     FileUtil.DeleteFileOrDirectory(cloneProjectPath);
-                }
-                catch (IOException)
-                {
-                     EditorUtility.DisplayDialog("Could not delete clone", "'" + ProjectCloner.GetCurrentProject().name + "_clone' may be currently open in another unity Editor. Please close it and try again.", "OK");
-                }
-                EditorUtility.ClearProgressBar();
-                */
-            }
+            return;
+
+            var sourceProject = GetCurrentProject();
+
+            UnlinkFolders(sourceProject.AssetPath, cloneProject.AssetPath);
+            UnlinkFolders(sourceProject.ProjectSettingsPath, cloneProject.ProjectSettingsPath);
+            UnlinkFolders(sourceProject.PackagesPath, cloneProject.PackagesPath);
+            UnlinkFolders(sourceProject.AutoBuildPath, cloneProject.AutoBuildPath);
+
+            Directory.Delete(cloneProject.ProjectPath, true);
         }
         #endregion
 
@@ -242,6 +232,32 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
                 Debug.LogWarning("Skipping Asset link, it already exists: " + destinationPath);
             }
         }
+
+        public static void UnlinkFolders(string sourcePath, string destinationPath)
+        {
+            if ((Directory.Exists(destinationPath) == false) && (Directory.Exists(sourcePath) == true))
+            {
+                switch (Application.platform)
+                {
+                    case (RuntimePlatform.WindowsEditor):
+                        //CreateLinkWin(sourcePath, destinationPath);
+                        break;
+                    case (RuntimePlatform.OSXEditor):
+                        //CreateLinkMac(sourcePath, destinationPath);
+                        break;
+                    case (RuntimePlatform.LinuxEditor):
+                        throw new System.NotImplementedException("No linux support yet :(");
+                        break;
+                    default:
+                        Debug.LogWarning("Not in a known editor. Where are you!?");
+                        break;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Skipping Asset link, it already exists: " + destinationPath);
+            }
+        }
         #endregion
 
         #region Utility methods
@@ -273,6 +289,16 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
         public static Project GetCurrentProject()
         {
             string pathString = GetCurrentProjectPath();
+            return new Project(pathString);
+        }
+
+        /// <summary>
+        /// Return a project object that describes all the paths we need to clone it.
+        /// </summary>
+        /// <returns></returns>
+        public static Project GetCloneProject()
+        {
+            string pathString = GetCloneProjectPath();
             return new Project(pathString);
         }
 

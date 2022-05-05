@@ -1,7 +1,7 @@
 {
     "name": "com.gameworkstore.unitymultiplayerenv",
     "displayName": "Unity Multiplayer Environment",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "unity": "2021.3",
     "description": "A tool to configure multiplayer environments for easy development.",
     "keywords": ["multiplayer", "unity", "editor", "symlink" ],

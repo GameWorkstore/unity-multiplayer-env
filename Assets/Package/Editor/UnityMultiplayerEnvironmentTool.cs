@@ -101,9 +101,12 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
                 Debug.LogError("Cannot open the project - it is already open.");
                 return;
             }
-
+#if UNITY_EDITOR_OSX
+            string fileName = "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub";
+#else
             string fileName = "C:/Program Files/Unity Hub/Unity Hub.exe";
-            string args = "-projectPath \"" + projectPath + "\"";
+#endif
+            string args = "--projectPath \"" + projectPath + "\"";
             Debug.Log("Opening project \"" + fileName + " " + args + "\"");
             StartHiddenConsoleProcess(fileName, string.Empty);
         }
@@ -134,9 +137,9 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
 
             Directory.Delete(cloneProject.ProjectPath, true);
         }
-        #endregion
+#endregion
 
-        #region Creating project folders
+#region Creating project folders
         /// <summary>
         /// Creates an empty folder using data in the given Project object
         /// </summary>
@@ -164,9 +167,9 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
             Debug.Log("Library copy: " + destinationProject.LibraryPath);
             CopyDirectoryWithProgressBar(sourceProject.LibraryPath, destinationProject.LibraryPath, "Cloning project '" + sourceProject.Name + "'. ");
         }
-        #endregion
+#endregion
 
-        #region Creating symlinks
+#region Creating symlinks
         /// <summary>
         /// Creates a symlink between destinationPath and sourcePath (Mac version).
         /// </summary>
@@ -258,9 +261,9 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
                 Debug.LogWarning("Skipping Asset link, it already exists: " + destinationPath);
             }
         }
-        #endregion
+#endregion
 
-        #region Utility methods
+#region Utility methods
         /// <summary>
         /// Returns true is the project currently open in Unity Editor is a clone.
         /// </summary>
@@ -468,14 +471,22 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
         /// <param name="args"></param>
         private static void StartHiddenConsoleProcess(string fileName, string args)
         {
+            if (!File.Exists(fileName))
+            {
+                Debug.LogError("Executable " + fileName + " doesn't exists!");
+                return;
+            }
+
             var process = new System.Diagnostics.Process();
+#if !UNITY_EDITOR_OSX
             process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+#endif
             process.StartInfo.FileName = fileName;
             process.StartInfo.Arguments = args;
             process.StartInfo.UseShellExecute = true;
 
             process.Start();
         }
-        #endregion
+#endregion
     }
 }

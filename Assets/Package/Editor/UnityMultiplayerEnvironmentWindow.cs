@@ -66,7 +66,8 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
                     /// If clone is created, we can either open it or delete it.
                     string cloneProjectPath = UnityMultiplayerEnvironmentTool.GetCloneProjectPath();
                     EditorGUILayout.TextField("Clone Project Path", cloneProjectPath, EditorStyles.textField);
-                    if (GUILayout.Button("Open Clone Project"))
+                    EditorGUILayout.HelpBox("Find your cloned project side-by-side to this project with _clone as suffix. Open it using Unity Hub.", MessageType.Info);
+                    if (GUILayout.Button("Open Unity Hub"))
                     {
                         UnityMultiplayerEnvironmentTool.OpenProject(cloneProjectPath);
                     }

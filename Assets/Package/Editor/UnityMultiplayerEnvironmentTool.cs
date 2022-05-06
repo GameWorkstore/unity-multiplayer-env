@@ -126,14 +126,7 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
             if (cloneProject.ProjectPath == GetOriginalProjectPath()) return;
             if (!cloneProject.ProjectPath.EndsWith(CloneNameSuffix)) return;
 
-            return;
-
             var sourceProject = GetCurrentProject();
-
-            UnlinkFolders(sourceProject.AssetPath, cloneProject.AssetPath);
-            UnlinkFolders(sourceProject.ProjectSettingsPath, cloneProject.ProjectSettingsPath);
-            UnlinkFolders(sourceProject.PackagesPath, cloneProject.PackagesPath);
-            UnlinkFolders(sourceProject.AutoBuildPath, cloneProject.AutoBuildPath);
 
             Directory.Delete(cloneProject.ProjectPath, true);
         }
@@ -147,6 +140,7 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
         public static void CreateProjectFolder(Project project)
         {
             string path = project.ProjectPath;
+            if (Directory.Exists(path)) return;
             Debug.Log("Creating new empty folder at: " + path);
             Directory.CreateDirectory(path);
         }
@@ -179,7 +173,7 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
         {
             Debug.LogWarning("This hasn't been tested yet! I am mac-less :( Please chime in on the github if it works for you.");
 
-            string cmd = "ln " + string.Format("\"{0}\" \"{1}\"", destinationPath, sourcePath);
+            string cmd = "-c \"ln -s "+ string.Format("{0} {1}", sourcePath, Directory.GetParent(destinationPath).FullName) + "\"";
             Debug.Log("Mac hard link " + cmd);
 
             StartHiddenConsoleProcess("/bin/bash", cmd);
@@ -483,9 +477,16 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
 #endif
             process.StartInfo.FileName = fileName;
             process.StartInfo.Arguments = args;
-            process.StartInfo.UseShellExecute = true;
-
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardError = true;
             process.Start();
+
+            var error = process.StandardError.ReadToEnd();
+            if (!string.IsNullOrEmpty(error))
+            {
+                Debug.Log(string.Format("Execution Error[{0}]: {1}", fileName, error));
+                return;
+            }
         }
 #endregion
     }

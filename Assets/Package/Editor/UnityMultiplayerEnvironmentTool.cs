@@ -465,11 +465,13 @@ namespace GameWorkstore.UnityMultiplayerEnvironment
         /// <param name="args"></param>
         private static void StartHiddenConsoleProcess(string fileName, string args)
         {
+#if UNITY_EDITOR_OSX
             if (!File.Exists(fileName))
             {
                 Debug.LogError("Executable " + fileName + " doesn't exists!");
                 return;
             }
+#endif
 
             var process = new System.Diagnostics.Process();
 #if !UNITY_EDITOR_OSX
